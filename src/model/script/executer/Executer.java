@@ -1,5 +1,6 @@
 package model.script.executer;
 
+import model.script.compiler.CompiledScript;
 import model.script.ScriptManager;
 import model.script.ApiFunction;
 

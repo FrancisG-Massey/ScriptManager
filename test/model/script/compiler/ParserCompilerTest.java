@@ -11,12 +11,12 @@ import static org.junit.Assert.*;
  *
  * @author Francis
  */
-public class CompilerTest {
+public class ParserCompilerTest {
 	
 	private Linker linker;
 	private ScriptParser parser;
 	
-	public CompilerTest() {
+	public ParserCompilerTest() {
 		
 	}	
 	

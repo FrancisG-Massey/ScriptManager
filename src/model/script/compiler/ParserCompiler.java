@@ -10,19 +10,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.script.executer.CompiledScript;
+import model.script.CompilationException;
+import model.script.Compiler;
+import model.script.Script;
 
 /**
  *
  * @author Francis
  */
-public class Compiler {
+public class ParserCompiler implements Compiler {
 	
 	private final Linker linker;
 	private final Map<Integer, CompiledScript> scripts = new HashMap<>();
 	private final File lookupTableFile;
 	
-	public Compiler (File lookupTable) {
+	public ParserCompiler (File lookupTable) {
 		this.linker = new Linker();
 		this.lookupTableFile = lookupTable;
 		if (lookupTable.exists()) {
@@ -30,12 +32,12 @@ public class Compiler {
 		}
 	}
 	
-	public void compile (File inputDirectory) {
+	public void compile (File inputDirectory) throws ParserException, IOException {
 		for (File file : inputDirectory.listFiles()) {
 			if (file.isDirectory()) {
 				compile(file);
 			}
-			compileFile(file);
+			compileScriptFromFile(file);
 		}
 	}
 	
@@ -44,7 +46,8 @@ public class Compiler {
 		
 	}
 	
-	private void compileFile (File script) {
+    @Override
+	public CompiledScript compileScriptFromFile (File script) throws ParserException, IOException {
 		try (FileChannel channel = new FileInputStream(script).getChannel()) {
 			ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
 			channel.read(buffer);
@@ -53,10 +56,19 @@ public class Compiler {
 			readHeaders(scanner);
 			cBuffer.flip();
 			compileScripts(scanner);
-		} catch (IOException | ParserException ex) {
-			Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, "Failed to compile file "+script, ex);
+            return scripts.get(scanner);
 		}
 	}
+
+    @Override
+    public CompiledEquation compileEquation(String equation) throws CompilationException {
+        return null;
+    }
+
+    @Override
+    public Script compileScriptFromString(String source) throws CompilationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 	
 	private void readLookupTable (File lookupTable) {
 		try (FileChannel channel = new FileInputStream(lookupTable).getChannel()) {
@@ -66,7 +78,7 @@ public class Compiler {
 				linker.registerScript(header.getName(), header);
 			}
 		} catch (IOException ex) {
-			Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, "Error reading lookup table", ex);
+			Logger.getLogger(ParserCompiler.class.getName()).log(Level.SEVERE, "Error reading lookup table", ex);
 		}
 	}
 	

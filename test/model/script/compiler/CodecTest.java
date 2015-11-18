@@ -1,7 +1,6 @@
 package model.script.compiler;
 
 import model.script.ScriptDataType;
-import model.script.executer.CompiledScript;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class CodecTest {
 		ByteBuffer buffer = ByteBuffer.allocate(script.getEncodedSize());
 		script.encode(buffer);
 		buffer.flip();
-		CompiledScript newScript = new CompiledScript(script.getID());
+		CompiledScript newScript = new CompiledScript(script.getId());
 		newScript.decode(buffer);
 		assertEquals(script, newScript);
 		 

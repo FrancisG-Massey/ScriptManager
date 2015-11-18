@@ -24,6 +24,13 @@ public class ScriptParser {
 		return parser;
 	}
 	
+	public static ScriptParser parseBlock (String source) throws ParserException {
+		SourceScanner scanner = new SourceScanner(CharBuffer.wrap(source));
+		ScriptParser parser = new ScriptParser(scanner, new Linker());
+		parser.parseBlock();
+		return parser;
+	}
+	
 	private List<ScriptDataType> paramSignature;
 	
 	private List<ScriptDataType> returnSignature;
@@ -102,6 +109,10 @@ public class ScriptParser {
 	
 	public List<ScriptOpcode> getInstructions () {
 		return instructions;
+	}
+	
+	public Map<Integer, Object> getConstants () {
+		return constants;
 	}
 	
 	public String getBinding () {

@@ -1,23 +1,25 @@
-package model.script.executer;
+package model.script.compiler;
 
-import model.script.ScriptDataType;
 import model.script.compiler.ScriptOpcode;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import model.script.BufferUtility;
+import model.script.Script;
+import model.script.ScriptDataType;
 import model.script.compiler.ScriptHeader;
 
 /**
  *
- * @author Sundays
+ * @author Francis
  */
-public class CompiledScript {
+public class CompiledScript implements Script {
 	
 	private static final byte VERSION = 1;
 	
@@ -63,13 +65,23 @@ public class CompiledScript {
 		this.id = id;
 	}
 	
-	public int getID () {
+	public int getId () {
 		return id;
 	}
 	
 	public String getName () {
 		return name;
 	}
+    
+    @Override
+    public int getIntLocalCount () {
+        return intLocalCount;
+    }
+    
+    @Override
+    public int getObjLocalCount () {
+        return objLocalCount;
+    }
 	
 	public int getEncodedSize () {
 		int size = name.length()+params.size()+responses.size()+(instructions.length*2)+10;
@@ -82,6 +94,25 @@ public class CompiledScript {
 		}
 		return size;
 	}
+    
+    @Override
+    public ScriptOpcode getInstruction (int pos) {
+        return instructions[pos];
+    }
+    
+    @Override
+    public int getInstructionCount () {
+        return instructions.length;
+    }
+    
+    @Override
+    public Object getConstant (int pos) {
+        return constants.get(pos);
+    }
+    
+    public List<ScriptDataType> getParams () {
+        return Collections.unmodifiableList(params);
+    }
 	
 	public void encode (ByteBuffer buffer) throws IOException {
 		buffer.put(VERSION);

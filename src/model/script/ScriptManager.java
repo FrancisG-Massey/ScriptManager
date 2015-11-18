@@ -1,6 +1,6 @@
 package model.script;
 
-import model.script.executer.CompiledScript;
+import model.script.compiler.CompiledScript;
 import model.script.executer.Context;
 
 /**

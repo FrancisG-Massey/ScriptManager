@@ -1,10 +1,12 @@
 package model.script.compiler;
 
+import model.script.CompilationException;
+
 /**
  *
  * @author Francis
  */
-public class ParserException extends Exception {
+public class ParserException extends CompilationException {
 	
 	
     public ParserException() {

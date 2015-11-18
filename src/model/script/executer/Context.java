@@ -1,5 +1,6 @@
 package model.script.executer;
 
+import model.script.compiler.CompiledScript;
 import model.script.ScriptDataType;
 import model.script.compiler.ScriptOpcode;
 import java.util.Stack;
@@ -30,25 +31,25 @@ public class Context {
 	
 	public Context (CompiledScript script) {
 		this.script = script;
-		this.localInts = new int[script.intLocalCount];
-		this.localObjs = new Object[script.objLocalCount];
+		this.localInts = new int[script.getIntLocalCount()];
+		this.localObjs = new Object[script.getObjLocalCount()];
 	}
 	
 	public ScriptOpcode getInstruction () {
-		return script.instructions[instrPtr];
+		return script.getInstruction(instrPtr);
 	}
 	
 	public int getIntConstant () {
-		return (int) script.constants.get(instrPtr);
+		return (int) script.getConstant(instrPtr);
 	}
 	
 	public Object getConstant () {
-		return script.constants.get(instrPtr);
+		return script.getConstant(instrPtr);
 	}
 	
 	public boolean nextInstr () {
 		instrPtr++;
-		return script.instructions.length > instrPtr;
+		return script.getInstructionCount() > instrPtr;
 	}
 	
 	public void incrementPos (int pos) {
@@ -72,11 +73,11 @@ public class Context {
 		invokeStack.push(frame);
 		this.script = script;
 		this.instrPtr = 0;
-		this.localInts = new int[script.intLocalCount];
-		this.localObjs = new Object[script.objLocalCount];
+		this.localInts = new int[script.getIntLocalCount()];
+		this.localObjs = new Object[script.getObjLocalCount()];
 		int intPos = 0;
 		int objPos = 0;
-		for (ScriptDataType param : script.params) {
+		for (ScriptDataType param : script.getParams()) {
 			if (param.intBase()) {
 				this.localInts[intPos++] = getInt();
 			} else {
@@ -87,7 +88,7 @@ public class Context {
 	
 	public void returnOneLevel () {
 		if (invokeStack.isEmpty()) {
-			instrPtr = script.instructions.length;
+			instrPtr = script.getInstructionCount();
 		} else {
 			InvokeFrame frame = invokeStack.pop();
 			this.script = frame.script;
